@@ -1,0 +1,6 @@
+E:\git\Sonup\SonupApp\YangMvc\bin\Debug\netcoreapp2.0\YangMvc.deps.json
+E:\git\Sonup\SonupApp\YangMvc\bin\Debug\netcoreapp2.0\YangMvc.dll
+E:\git\Sonup\SonupApp\YangMvc\obj\Debug\netcoreapp2.0\YangMvc.csprojResolveAssemblyReference.cache
+E:\git\Sonup\SonupApp\YangMvc\obj\Debug\netcoreapp2.0\YangMvc.csproj.CoreCompileInputs.cache
+E:\git\Sonup\SonupApp\YangMvc\obj\Debug\netcoreapp2.0\YangMvc.AssemblyInfoInputs.cache
+E:\git\Sonup\SonupApp\YangMvc\obj\Debug\netcoreapp2.0\YangMvc.AssemblyInfo.cs
