@@ -7,28 +7,95 @@ using System.Threading.Tasks;
 using System.Configuration;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.AspNetCore.Http;
+using MySql.Data.MySqlClient;
+using System.Data.Common;
 
 namespace YangMvc
 {
-    public class DbModel
+    public class DbBase
     {
-        public DbSettings Settings { get; set; } = new DbSettings();
+        protected DbSettings Settings { get; set; } = new DbSettings();
 
-        protected DbModel() { }
+        protected DbBase() { }
 
-        public static DbModel Create(DbServer dbServer = DbServer.BizDb, int timeout = 10)
+        public static DbBase Create(HttpContext context, DbServer dbServer = DbServer.MainDb, int timeout = 10)
         {
-            DbModel db = new DbModel();
+            DbBase db = new DbBase();
             db.Settings.Server = dbServer;
             db.Settings.Timeout = timeout;
+            db.MvcContext = context;
             return db;
         }
 
-        public T FirstOrDefault<T>(string sql, object param)
+        private DatabaseType DbType;
+        private DbProviderFactory DbFactory;
+        private string ConnString;
+
+        private IDbConnection GetConnection()
+        {
+            if (DbFactory == null)
+            {
+                //Check Config
+                ConnString = Config.Get(this.Settings.Server.ToString());
+                if (string.IsNullOrEmpty(ConnString))
+                {
+                    throw new ApplicationException("缺少数据库连接配置项: " + this.Settings.Server);
+                }
+
+                //Get Db Server Type
+                string dbType = Config.Get("MainDbType");
+                DbType = "MySql".EqualString(dbType) ? DatabaseType.MySql : DatabaseType.SqlServer;
+
+
+                if (DbType == DatabaseType.MySql)
+                {
+                    DbFactory = new MySqlClientFactory();
+                    //return new MySqlConnection(connStr);
+                }
+                else
+                {
+                    DbFactory = SqlClientFactory.Instance;
+                }
+                //return new SqlConnection(connStr);
+            }
+
+            var conn = DbFactory.CreateConnection();
+            conn.ConnectionString = ConnString;
+            return conn;
+        }
+
+        private DbDataAdapter GetAdapter(IDbCommand command = null)
+        {
+            var adapter = DbFactory.CreateDataAdapter();
+            if (command != null)
+            {
+                adapter.SelectCommand = (DbCommand)command;
+            }
+            return adapter;
+        }
+
+        private IDataParameter GetParameter(string name , object value)
+        {
+            var parameter = DbFactory.CreateParameter();
+            parameter.ParameterName = name;
+            parameter.Value = value;
+            return parameter;
+            //if (DbType == DatabaseType.SqlServer)
+            //    return new SqlParameter(name, value); 
+            //return new MySqlParameter(name, value);
+        }
+
+        private void AddParameter(IDbCommand comm , string name , object value)
+        {
+            comm.Parameters.Add(GetParameter(name , value ));
+        }
+             
+        protected T FirstOrDefault<T>(string sql, object param)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return conn.QueryFirstOrDefault<T>(sql, param);
                 }
@@ -40,11 +107,11 @@ namespace YangMvc
             }
         }
 
-        public List<T> Query<T>(string sql, object param)
+        protected List<T> Query<T>(string sql, object param)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return conn.Query<T>(sql, param).ToList();
                 }
@@ -56,11 +123,11 @@ namespace YangMvc
             }
         }
 
-        public async Task<List<T>> QueryAsync<T>(string sql, object param)
+        protected async Task<List<T>> QueryAsync<T>(string sql, object param)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return (await conn.QueryAsync<T>(sql, param)).ToList();
                 }
@@ -72,7 +139,7 @@ namespace YangMvc
             }
         }
 
-        public void LogError(string sql, object param, Exception ex)
+        protected void LogError(string sql, object param, Exception ex)
         {
             if (param is SysErrorLog)
                 return;
@@ -90,11 +157,11 @@ namespace YangMvc
             Insert(log);
         }
 
-        public List<dynamic> Query(string sql, object param, DbServer dbName = DbServer.BizDb)
+        protected List<dynamic> Query(string sql, object param, DbServer dbName = DbServer.MainDb)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return conn.Query(sql, param).ToList();
                 }
@@ -106,11 +173,11 @@ namespace YangMvc
             }
         }
 
-        protected DataTable QueryDataTable(string sql, object param, DbServer dbName = DbServer.BizDb)
+        protected DataTable QueryDataTable(string sql, object param, DbServer dbName = DbServer.MainDb)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     var comm = conn.CreateCommand();
                     comm.CommandText = sql;
@@ -121,11 +188,11 @@ namespace YangMvc
                         var props = type.GetProperties();
                         foreach (var item in props)
                         {
-                            comm.Parameters.AddWithValue(item.Name, item.GetValue(param, null));
+                            AddParameter(comm, item.Name, item.GetValue(param, null));
                         }
                     }
 
-                    SqlDataAdapter sda = new SqlDataAdapter(comm);
+                    var sda = GetAdapter(comm);  
                     DataTable dt = new DataTable();
                     sda.Fill(dt);
                     return dt;
@@ -138,12 +205,7 @@ namespace YangMvc
             }
         }
 
-        public SqlConnection GetDbConnection(DbServer dbName = DbServer.BizDb)
-        {
-            return new SqlConnection(GetDbConnectionString());
-        }
-
-        public List<T> Query<T>(string sql, object param, Pager pageInfo, DbServer dbName = DbServer.BizDb)
+        protected List<T> Query<T>(string sql, object param, Pager pageInfo, DbServer dbName = DbServer.MainDb)
         {
             if (string.IsNullOrEmpty(pageInfo.OrderBy))
             {
@@ -176,11 +238,11 @@ SELECT ROW_NUMBER() OVER(ORDER BY {pageInfo.OrderBy}) AS RowNo , * FROM (
             }
         }
 
-        public int Execute(string sql, object param, DbServer dbName = DbServer.BizDb)
+        protected int Execute(string sql, object param, DbServer dbName = DbServer.MainDb)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return conn.Execute(sql, param);
                 }
@@ -192,11 +254,11 @@ SELECT ROW_NUMBER() OVER(ORDER BY {pageInfo.OrderBy}) AS RowNo , * FROM (
             }
         }
 
-        public async Task<int> ExecuteAsync(string sql, object param, DbServer dbName = DbServer.BizDb)
+        protected async Task<int> ExecuteAsync(string sql, object param, DbServer dbName = DbServer.MainDb)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return await conn.ExecuteAsync(sql, param);
                 }
@@ -208,11 +270,11 @@ SELECT ROW_NUMBER() OVER(ORDER BY {pageInfo.OrderBy}) AS RowNo , * FROM (
             }
         }
 
-        public T ExecuteScalar<T>(string sql, object param, DbServer dbName = DbServer.BizDb)
+        protected T ExecuteScalar<T>(string sql, object param, DbServer dbName = DbServer.MainDb)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+                using (IDbConnection conn = GetConnection())
                 {
                     return conn.ExecuteScalar<T>(sql, param);
                 }
@@ -232,42 +294,28 @@ SELECT ROW_NUMBER() OVER(ORDER BY {pageInfo.OrderBy}) AS RowNo , * FROM (
         private string GetDbConnectionString()
         {
             string key = Settings.Server.ToString();
-            if (DbConnetions.ContainsKey(key))
-            {
-                return DbConnetions[key];
-            }
-            else
-            {
-                DbConnetions = new Dictionary<string, string>();
-
-                DbConnetions.Add("BizDb", Config.Get("BizDb"));
-                DbConnetions.Add("GpsDb", Config.Get("GpsDb"));
-
-                if (!DbConnetions.ContainsKey(key))
-                    throw new ApplicationException($"配置文件中没有{key}");
-
-                return DbConnetions[key];
-            }
+            return Config.Get(key);
         }
 
-        public T Get<T>(int id) where T : class
+        protected T Get<T>(int id) where T : class
         {
-            using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+            using (IDbConnection conn = GetConnection())
             {
                 return conn.Get<T>(id);
             }
         }
 
-        public void Insert<T>(T entity) where T : class
+        protected void Insert<T>(T entity) where T : class
         {
-            using (SqlConnection conn = new SqlConnection(GetDbConnectionString()))
+            using (IDbConnection conn = GetConnection())
             {
                 conn.Insert(entity);
             }
         }
 
-        public bool SaveError { get; set; } = true;
+        protected bool SaveError { get; set; } = true;
 
+        public HttpContext MvcContext { get; set; }
     }
 
     public class DbSettings
@@ -282,11 +330,15 @@ SELECT ROW_NUMBER() OVER(ORDER BY {pageInfo.OrderBy}) AS RowNo , * FROM (
 
     public enum DbServer
     {
-        BizDb = 1,
-        GpsDb = 2,
+        MainDb = 1,
+        SecondDb = 2,
         MainMongo = 3,
         GpsLite = 4
     }
 
-
+    public enum DatabaseType
+    {
+        SqlServer = 1, 
+        MySql = 2
+    }
 }

@@ -1,0 +1,14 @@
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\SonupApp.deps.json
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\SonupApp.runtimeconfig.json
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\SonupApp.runtimeconfig.dev.json
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\SonupApp.dll
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\SonupApp.pdb
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\YangMvc.dll
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\Dapper.Contrib.dll
+E:\git\Sonup\sonup\SonupApp\SonupApp\bin\Release\netcoreapp2.0\YangMvc.pdb
+E:\git\Sonup\sonup\SonupApp\SonupApp\obj\Release\netcoreapp2.0\SonupApp.csprojResolveAssemblyReference.cache
+E:\git\Sonup\sonup\SonupApp\SonupApp\obj\Release\netcoreapp2.0\SonupApp.csproj.CoreCompileInputs.cache
+E:\git\Sonup\sonup\SonupApp\SonupApp\obj\Release\netcoreapp2.0\SonupApp.AssemblyInfoInputs.cache
+E:\git\Sonup\sonup\SonupApp\SonupApp\obj\Release\netcoreapp2.0\SonupApp.AssemblyInfo.cs
+E:\git\Sonup\sonup\SonupApp\SonupApp\obj\Release\netcoreapp2.0\SonupApp.dll
+E:\git\Sonup\sonup\SonupApp\SonupApp\obj\Release\netcoreapp2.0\SonupApp.pdb

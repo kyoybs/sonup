@@ -1,0 +1,12 @@
+E:\git\Sonup\sonup\SonupApp\SonupApp
+--output-path=obj\Any CPU\Release\netcoreapp2.0\
+--application-name=SonupApp
+--content-root=E:\git\Sonup\sonup\SonupApp\SonupApp
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\Home\About.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\Home\Contact.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\Home\Index.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\Shared\Error.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\Shared\_Layout.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\Shared\_ValidationScriptsPartial.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\_ViewImports.cshtml
+--file=E:\git\Sonup\sonup\SonupApp\SonupApp\Views\_ViewStart.cshtml

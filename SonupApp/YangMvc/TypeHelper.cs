@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using ShareCarApi.Common;
-using BatCommon.Models;
+using ShareCarApi.Common; 
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

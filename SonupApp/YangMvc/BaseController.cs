@@ -9,7 +9,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Web;
-using BatCommon.Models.Apis;
+using System.Collections.Concurrent;
 
 namespace YangMvc
 {
@@ -24,11 +24,19 @@ namespace YangMvc
             return _Session;
         }
 
-        public T Model<T>() where T : BaseModel, new()
+        private ConcurrentDictionary<string, DbBase> Dbs = new ConcurrentDictionary<string, DbBase>();
+
+        public T Db<T>() where T : DbBase, new()
         {
-            T model = new T();
-            model.MvcContext = this.HttpContext;
-            return model;
+            string type = typeof(T).FullName;
+            if (!Dbs.ContainsKey(type))
+            {
+                T db = new T();
+                db.MvcContext = this.HttpContext;
+                Dbs.TryAdd(type, db);
+                return db;
+            }
+            return Dbs[type] as T;
         }
         
         public CacheHelper Cache()
@@ -36,20 +44,7 @@ namespace YangMvc
             CacheHelper ch = new CacheHelper(HttpContext);
             return ch;
         }
-
-        protected string CreateSn(int partnerId , string url)
-        {
-            var ptn = Model<PartnerModel>().GetPartner(partnerId);
-            string pk = ptn.PartnerSecret;
-            int pos = url.IndexOf("&sn=");
-            if (pos > 0)
-            {
-                url = url.Substring(0, pos);
-            }
-            return HttpUtility.UrlEncode( url.ToLower().EncryBat(pk));
-        }
-         
-
+  
         protected string GetUrl()
         {
             return this.Request.GetDisplayUrl();
@@ -68,7 +63,7 @@ namespace YangMvc
             return _Session;
         }
 
-        public T Model<T>() where T : BaseModel, new()
+        public T Db<T>() where T : DbBase, new()
         {
             T model = new T();
             model.MvcContext = this.HttpContext;
@@ -83,7 +78,7 @@ namespace YangMvc
 
     public class AuthController: BaseController
     {
-        public SysUser LoginUser
+        public AppUser LoginUser
         {
             get
             {
@@ -106,7 +101,7 @@ namespace YangMvc
     [AuthPageFilter]
     public class AuthPageModel : BasePageModel
     {
-        public SysUser LoginUser
+        public AppUser LoginUser
         {
             get
             {

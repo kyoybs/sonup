@@ -9,7 +9,7 @@ namespace YangMvc
     {
         public bool IsSuccess { get; set; }
 
-        public object Entity { get; set; }
+        public object Data { get; set; }
 
         public string Message { get; set; }
 
@@ -21,7 +21,7 @@ namespace YangMvc
         {
             if (entity != null)
             {
-                this.Entity = entity;
+                this.Data = entity;
                 IsSuccess = true;
             }
             else

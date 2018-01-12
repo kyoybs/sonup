@@ -6,14 +6,10 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="Dapper.Contrib" Version="1.50.4" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Dapper.Contrib">
-      <HintPath>..\Dlls\Dapper.Contrib.dll</HintPath>
-    </Reference>
+    <PackageReference Include="MySql.Data" Version="6.10.5" />
   </ItemGroup>
 
 </Project>

@@ -38,5 +38,12 @@ namespace YangMvc
             }
             return sTemp.ToString().ToLower();
         }
+
+        public static bool EqualString(this string str , string strOther , bool ignoreCase = true)
+        {
+            if (strOther == str)
+                return true;
+            return str?.Equals(strOther, StringComparison.CurrentCultureIgnoreCase)??false;
+        }
     }
 }
