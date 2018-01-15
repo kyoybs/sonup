@@ -10,10 +10,9 @@ ajax.post = function (url, args) {
         if (rsp.IsSuccess) {
             return rsp.Data;
         } else {
-            alert("Error:" + rsp.Message);
-            return Promis.reject("");
+            throw "【系统信息】" + rsp.Message;
         }
-    }).catch(function (err) { alert(error); });
-
+    });
+     
     return fn;
 }

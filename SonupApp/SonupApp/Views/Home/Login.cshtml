@@ -1,0 +1,77 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<div>
+
+    <form class="form box" style="padding-top:30px; position:relative; padding-bottom:0;">
+        <section class="center title">欢迎使用</section>
+
+        <div class="split"></div>
+        <div style="padding:0px 80px;">
+            <div class="split"></div>
+            <div class="form-group">
+                <input id="txtUserName" name="user" type="text" placeholder="用户名" class="form-control" v-model="model.user" required />
+            </div>
+
+            <div class="form-group">
+                <input type="password" name="pwd" placeholder="密码" class="form-control" v-model="model.pwd" required />
+            </div>
+
+            <div class="center">
+                <label>
+                    <input type="checkbox" />
+                    下次自动登录
+                </label>
+
+                <button type="button" class="btn btn-primary" @@click="dologin">&nbsp;登&nbsp;录&nbsp;</button>
+            </div>
+
+        </div>
+        <div class="info">
+            {{msg}}
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    const vue = new Vue({
+        el: "form",
+        data: {
+            model: { user: "", pwd: "" },
+            msg:""
+        },
+        methods: {
+            dologin: function () {
+                if ($("form").valid() == false) {
+                    $("form").find(":input.error:first").focus();
+                    return;
+                }
+
+                let url = '@Url.Content("~/Home/Login")';
+                var args = {
+                    ticks: new Date().getTime(), userName: vue.model.user,
+                    password: vue.model.pwd,
+                    ccode: vue.model.user.length * vue.model.pwd.length * 3 * (new Date().getDate()),
+                    scode:'@ViewBag.ServerCode'
+                };
+
+                ajax.post(url, args).then(function (rr) {
+                    vue.msg = rr;
+                }).catch(function (err) {
+                    vue.msg =err;
+                });
+
+            }
+
+        },
+        mount: function () {
+            $("#txtUserName").focus();
+        }
+    });
+
+</script>

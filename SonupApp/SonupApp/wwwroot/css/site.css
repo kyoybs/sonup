@@ -78,3 +78,13 @@ label{
         font-size:20px;
         font-weight:bold;
     }
+
+    .error{
+        color:#cc6666;
+    }
+
+.info {
+    padding:10px;
+    color: #cc6666;
+    text-align:center;
+}

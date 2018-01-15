@@ -12,7 +12,7 @@ namespace SonupApp.Controllers
 {
     public class HomeController : BaseController
     {
-        private UserDb UserDb => Db<UserDb>(); 
+        private UserDb UserDb => Db<UserDb>();
 
         public IActionResult Index()
         {
@@ -22,6 +22,12 @@ namespace SonupApp.Controllers
             return View();
         }
 
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public JsonResult Login(long ticks, string userName, string password, long ccode, string scode)
         {
             //验证ServerCode
@@ -59,6 +65,11 @@ namespace SonupApp.Controllers
             Session().SetLoginUser(user);
 
             return AjaxResult.Json("ok");
+        }
+
+        public IActionResult Memory()
+        {
+            return View();
         }
 
         public IActionResult About()
