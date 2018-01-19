@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SonupApp.Models;
 using SonupApp.Models.Sys;
@@ -26,9 +28,10 @@ namespace SonupApp.Controllers
         {
             return View();
         }
-
+         
         [HttpPost]
-        public JsonResult Login(long ticks, string userName, string password, long ccode, string scode)
+        public async Task<JsonResult> Login(long ticks, string userName, string password, long ccode, string scode,
+            [FromServices] UserManager<AppUser> _UserManager)
         {
             //验证ServerCode
             string sessionCode = Session().GetString("LoginValidCode");
@@ -64,9 +67,12 @@ namespace SonupApp.Controllers
 
             Session().SetLoginUser(user);
 
+            await _UserManager.CreateAsync(user);
+
             return AjaxResult.Json("ok");
         }
 
+        [Authorize]
         public IActionResult Memory()
         {
             return View();

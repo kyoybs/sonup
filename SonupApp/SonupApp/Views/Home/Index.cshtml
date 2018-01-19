@@ -2,10 +2,9 @@
     ViewData["Title"] = "Home Page";
 }
 
-<canvas class="mask"></canvas>
-
-
-<div class="fill">
+<canvas class="mask mask-bg"></canvas>
+ 
+<div id="divPage" class="fill">
     @Html.Partial("~/Views/Home/Login.cshtml") 
 </div>
 
@@ -16,6 +15,7 @@
             //baseColor:'#fff' // 背景色
             //generator:'hexagons' // 样式
         };
+
         var pattern = GeoPattern.generate('GitHub' + Math.random(), option);
         $('body').css('background-image', pattern.toDataUrl());
  

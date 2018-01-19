@@ -1,12 +1,12 @@
-﻿body {
-    padding:0;
-    color:#666;
-    font-family:'Microsoft YaHei';
-    font-size:16px !important;
+﻿html, body {
+    padding: 0;
+    color: #666;
+    font-family: 'Microsoft YaHei';
+    font-size: 16px !important;
 }
- 
-label{
-    font-weight:normal;
+
+label {
+    font-weight: normal;
 }
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
@@ -30,61 +30,123 @@ label{
     background-color: #fcfcfc;
     height: 100vh;
     position: fixed;
-    z-index: 0;
     top: 0;
     left: 0;
     width: 100vw;
     opacity: 0.85
 }
 
+.mask-bg {
+    z-index: 0;
+    opacity: 0.80
+}
+
+.mask-bottom {
+    z-index: 10;
+}
+
+.mask-middle {
+    z-index: 100;
+}
+
+.mask-top {
+    background-color: #000;
+    z-index: 1000;
+    opacity: 0.80
+}
+
 .box {
     border: solid 1px #ccc;
     width: 420px;
     height: 330px;
-    border-radius:5px;
-    background-color:#fefefe;
+    border-radius: 5px;
+    background-color: #fefefe;
 }
 
-.center{
-    text-align:center;
-    padding:3px;
+.center {
+    text-align: center;
+    padding: 3px;
 }
 
-.split{
-    height:18px;
+.split {
+    height: 18px;
 }
+
 .split-min {
     height: 8px;
 }
 
-.title{
-    font-size:24px;
-    font-weight:bold;
+.title {
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.form-group{
-    position:relative;
-    padding-right:15px;
+.form-group {
+    position: relative;
+    padding-right: 15px;
 }
+
     .form-group .error {
-        color: red; 
+        color: red;
     }
 
     .form-group label.error {
         color: red;
         position: absolute;
         right: 0;
-        top:3px;
-        font-size:20px;
-        font-weight:bold;
+        top: 3px;
+        font-size: 20px;
+        font-weight: bold;
     }
 
-    .error{
-        color:#cc6666;
-    }
+.error {
+    color: #cc6666;
+}
 
 .info {
-    padding:10px;
+    padding: 10px;
     color: #cc6666;
+    text-align: center;
+}
+
+.datepicker-box {
+    position: fixed;
+    z-index: 1900;
+    border: solid 1px #669;
+    width: 360px;
+    height: 260px;
+    top: 50%;
+    left: 50%;
+    margin-left: -180px;
+    margin-top: -130px;
+    background-color: #fdfdfd;
+    display: flex;
+    flex-direction: column;
+}
+
+    .datepicker-box .title {
+        padding: 12px;
+    }
+
+    .datepicker-box .weekday {
+        
+    }
+.datepicker .item{
+    flex:1;
+    height:30px;
+    margin:0.5rem;
     text-align:center;
+    display:flex;
+    flex-direction:column;
+    border:solid 1px red;
+}
+.datepicker option { 
+    text-align: center;
+}
+.datepicker-content { 
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    padding:0 1rem;
 }

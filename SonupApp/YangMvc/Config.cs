@@ -11,6 +11,8 @@ using Newtonsoft.Json.Serialization;
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 namespace YangMvc
 {
@@ -31,6 +33,17 @@ namespace YangMvc
         /// <param name="services"></param>
         public static void InitServices(IServiceCollection services, string cacheConfigKeyMssql = "AppSettings:MainDb")
         {
+            services.AddIdentity<AppUser, AppRole>()
+                .AddDefaultTokenProviders();
+
+            services.AddTransient(typeof(IUserStore<AppUser>), typeof( YangUserStore));
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) 
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Home/Index";
+                });
+
             services.AddMvc().AddJsonOptions(opts => {
                 opts.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
@@ -56,6 +69,8 @@ namespace YangMvc
 
         public static void InitMvc(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseAuthentication();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

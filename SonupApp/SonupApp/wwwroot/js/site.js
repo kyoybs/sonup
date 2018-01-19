@@ -16,3 +16,10 @@ ajax.post = function (url, args) {
      
     return fn;
 }
+
+
+ajax.open = function (url, args) {
+    $.get(url, args).then(function (rsp) {
+        $("#divPage").html(rsp);
+    });
+}
